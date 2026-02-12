@@ -1,0 +1,19 @@
+{
+	"extension": {
+		"version": "0.8.2026020401",
+		"json": 2
+	},
+	"project": {
+		"name": "FlyingBot_Robot_ver_USA",
+		"description": "Edit 11-2-2026",
+		"creationDate": "2/11/2026, 8:49:30 AM",
+		"platform": "IQ2",
+		"language": "cpp",
+		"slot": 2,
+		"sdkVersion": "IQ2_20250520_15_00_00",
+		"cpp": {
+			"includePath": [],
+			"printf_float": false
+		}
+	}
+}
