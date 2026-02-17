@@ -60,7 +60,7 @@ enum class ButtonStage
     STEP2
 };
 
-//================ STRUCT ที่หาย =================
+//================ STRUCT =================
 
 struct RobotState
 {
@@ -74,10 +74,11 @@ struct RobotState
     bool Eup = false;
     bool EDown = false;
     bool Go = false;
+    bool NewDowm = false;
 
-    double nowTime = 0;
+    // double nowTime = 0;
     double Kspeed = 1.05;
-    double speedB = 0.55;
+    // double speedB = 0.55;
 };
 
 // controller state
@@ -93,9 +94,6 @@ struct ControllerState
 
 RobotState robot;
 ControllerState controllerState;
-
-// // AI Vision Code Descriptions
-// vex::aivision AIVision(PORT4, aivision::ALL_AIOBJS);
 
 // generating and setting random seed
 void initializeRandomSeed()
@@ -155,7 +153,7 @@ void Retract_2Pneumatic_Pin();
 void Extend_2Pneumatic_Pin();
 void Ajpin();
 
-int Screen_precision = 0, Console_precision = 0, AIVision_objectIndex = 0;
+int Screen_precision = 0, Console_precision = 0;
 
 // float Rup, Rdown, Lup, Ldown, Kspeed, timee = 0.0;
 
@@ -196,30 +194,27 @@ void Place_beam()
     wait(0.55, seconds);
     robot.stop = false;
     robot.beamState = BeamState::OFF;
-    robot.speedB = 0.55;
+    // robot.speedB = 0.55;
     Drop_down_beam();
     robot.isBusy = false;
-    Brain.Screen.clearLine(3, 1);
-    robot.nowTime = Brain.Timer.value();
-    Brain.Screen.setCursor(3, 1);
-    Brain.Screen.print("PBeam_Done: %.2f", robot.nowTime);
+    // Brain.Screen.clearLine(3, 1);
+    // robot.nowTime = Brain.Timer.value();
+    // Brain.Screen.setCursor(3, 1);
+    // Brain.Screen.print("PBeam_Done: %.2f", robot.nowTime);
 }
 
 // User defined function
 void Grab_Beam_up()
 {
     MotorBeam.setStopping(hold);
-    // NO4
-    // MotorBeam.spinFor(reverse, 320.0, degrees, false);
-    // NO3
-    MotorBeam.spinFor(reverse, 320.0, degrees, false);
-    // NO2
-    //  MotorBeam.spinFor(reverse, 340.0, degrees, false);
+    MotorBeam.stop(coast);
+    wait(0.1, seconds);
+    MotorBeam.spinFor(reverse, 240.0, degrees, false);
     robot.isBusy = false;
-    Brain.Screen.clearLine(3, 1);
-    robot.nowTime = Brain.Timer.value();
-    Brain.Screen.setCursor(3, 1);
-    Brain.Screen.print("GBeam_Done: %.2f", robot.nowTime);
+    // Brain.Screen.clearLine(3, 1);
+    // robot.nowTime = Brain.Timer.value();
+    // Brain.Screen.setCursor(3, 1);
+    // Brain.Screen.print("GBeam_Done: %.2f", robot.nowTime);
 }
 
 // User defined function
@@ -251,10 +246,10 @@ void Drop_down_beam()
     MotorLeft.setStopping(coast);
     MotorRight.setStopping(coast);
     robot.isBusy = false;
-    Brain.Screen.clearLine(3, 1);
-    robot.nowTime = Brain.Timer.value();
-    Brain.Screen.setCursor(3, 1);
-    Brain.Screen.print("DBeam_Done: %.2f", robot.nowTime);
+    // Brain.Screen.clearLine(3, 1);
+    // robot.nowTime = Brain.Timer.value();
+    // Brain.Screen.setCursor(3, 1);
+    // Brain.Screen.print("DBeam_Done: %.2f", robot.nowTime);
 }
 
 // User defined function
@@ -286,10 +281,10 @@ void Grab_then_up()
     MotorPin.spinToPosition(190.0, degrees, false);
     wait(0.3, seconds);
     Extend_joint_pin();
-    Brain.Screen.clearLine(3, 1);
-    robot.nowTime = Brain.Timer.value();
-    Brain.Screen.setCursor(3, 1);
-    Brain.Screen.print("GPin_Done: %.2f", robot.nowTime);
+    // Brain.Screen.clearLine(3, 1);
+    // robot.nowTime = Brain.Timer.value();
+    // Brain.Screen.setCursor(3, 1);
+    // Brain.Screen.print("GPin_Done: %.2f", robot.nowTime);
 }
 // User defined function
 void Rup_Init()
@@ -325,6 +320,7 @@ void Drop_down()
     robot.Eup = true;
     robot.pinState = PinState::OFF;
     controllerState.Rup = ButtonStage::IDLE;
+    robot.NewDowm = true;
     // MotorPin.setPosition(0.0, degrees);
     // MotorPin.spinFor(forward, 70, degrees, true);
 }
@@ -382,10 +378,10 @@ void Drop_down_Grab_Up()
     MotorLeft.stop(coast);
     MotorRight.stop(coast);
     robot.isBusy = false;
-    Brain.Screen.clearLine(3, 1);
-    robot.nowTime = Brain.Timer.value();
-    Brain.Screen.setCursor(3, 1);
-    Brain.Screen.print("D&GPin_Done: %.2f", robot.nowTime);
+    // Brain.Screen.clearLine(3, 1);
+    // robot.nowTime = Brain.Timer.value();
+    // Brain.Screen.setCursor(3, 1);
+    // Brain.Screen.print("D&GPin_Done: %.2f", robot.nowTime);
 }
 // User defined function
 void Spin_Robot()
@@ -428,10 +424,10 @@ void Spin_Robot()
     MotorLeft.spinFor(reverse, 100.0, degrees, false);
     MotorRight.spinFor(reverse, 100.0, degrees, true);
     robot.pinState = PinState::OFF;
-    Brain.Screen.clearLine(4, 1);
-    robot.nowTime = Brain.Timer.value();
-    Brain.Screen.setCursor(4, 1);
-    Brain.Screen.print("Spin_Robot_Done: %.2f", robot.nowTime);
+    // Brain.Screen.clearLine(4, 1);
+    // robot.nowTime = Brain.Timer.value();
+    // Brain.Screen.setCursor(4, 1);
+    // Brain.Screen.print("Spin_Robot_Done: %.2f", robot.nowTime);
 }
 
 void standoff()
@@ -463,10 +459,10 @@ void standoff()
             controllerState.Rup = ButtonStage::IDLE;
             robot.MakeY = false;
             robot.stop = false;
-            Brain.Screen.clearLine(3, 1);
-            robot.nowTime = Brain.Timer.value();
-            Brain.Screen.setCursor(3, 1);
-            Brain.Screen.print("ConC_Done: %.2f", robot.nowTime);
+            // Brain.Screen.clearLine(3, 1);
+            // robot.nowTime = Brain.Timer.value();
+            // Brain.Screen.setCursor(3, 1);
+            // Brain.Screen.print("ConC_Done: %.2f", robot.nowTime);
         }
         else if (Controller.AxisC.position() < -90.0)
         {
@@ -475,10 +471,10 @@ void standoff()
             MotorPin.spinToPosition(320, degrees, false);
             wait(100, msec);
             Extend_joint_pin();
-            Brain.Screen.clearLine(3, 1);
-            robot.nowTime = Brain.Timer.value();
-            Brain.Screen.setCursor(3, 1);
-            Brain.Screen.print("ConC_Done: %.2f", robot.nowTime);
+            // Brain.Screen.clearLine(3, 1);
+            // robot.nowTime = Brain.Timer.value();
+            // Brain.Screen.setCursor(3, 1);
+            // Brain.Screen.print("ConC_Done: %.2f", robot.nowTime);
         }
         robot.isBusy = false;
     }
@@ -496,8 +492,8 @@ void Ajpin()
     }
     MotorLeft.setVelocity(45, percent);
     MotorRight.setVelocity(45, percent);
-    MotorLeft.spinFor(forward, 146.5, degrees, false);
-    MotorRight.spinFor(forward, 146.5, degrees, true);
+    MotorLeft.spinFor(forward, 100.5, degrees, false);
+    MotorRight.spinFor(forward, 100.5, degrees, true);
     MotorLeft.setStopping(hold);
     MotorRight.setStopping(hold);
     MotorLeft.stop();
@@ -511,12 +507,12 @@ void Pin_On_the_sidelines()
     {
         MotorPin.resetPosition();
         // MotorPin.setPosition(0.0, degrees);
-        MotorPin.spinFor(100.0, degrees, false);
+        MotorPin.spinFor(110.0, degrees, false);
         robot.Eup = false;
-        Brain.Screen.clearLine(3, 1);
-        robot.nowTime = Brain.Timer.value();
-        Brain.Screen.setCursor(3, 1);
-        Brain.Screen.print("robot.Eup_Done: %.2f", robot.nowTime);
+        // Brain.Screen.clearLine(3, 1);
+        // robot.nowTime = Brain.Timer.value();
+        // Brain.Screen.setCursor(3, 1);
+        // Brain.Screen.print("robot.Eup_Done: %.2f", robot.nowTime);
     }
     else
     {
@@ -529,8 +525,8 @@ void Pin_On_the_sidelines()
         MotorPin.spinToPosition(80.0, degrees);
         MotorLeft.setVelocity(100, percent);
         MotorRight.setVelocity(100, percent);
-        MotorLeft.spinFor(reverse, 200.0, degrees, false);
-        MotorRight.spinFor(reverse, 200.0, degrees);
+        MotorLeft.spinFor(reverse, 60.0, degrees, false);
+        MotorRight.spinFor(reverse, 60.0, degrees);
         Extend_joint_pin();
         robot.stop = false;
         //----
@@ -560,10 +556,10 @@ void Pin_On_the_sidelines()
         robot.pinState = PinState::OFF;
         robot.isBusy = false;
         robot.Eup = true;
-        Brain.Screen.clearLine(3, 1);
-        robot.nowTime = Brain.Timer.value();
-        Brain.Screen.setCursor(3, 1);
-        Brain.Screen.print("EUp_Done: %.2f", robot.nowTime);
+        // Brain.Screen.clearLine(3, 1);
+        // robot.nowTime = Brain.Timer.value();
+        // Brain.Screen.setCursor(3, 1);
+        // Brain.Screen.print("EUp_Done: %.2f", robot.nowTime);
     }
 }
 
@@ -582,15 +578,15 @@ void Pin_on_go()
             // Robot NO2 = 125.0
             // Robot NO3 = 100.0
             MotorPin.resetPosition();
-            MotorPin.spinFor(reverse, 117.0, degrees, true);
+            MotorPin.spinFor(reverse, 90.0, degrees, true);
             MotorPin.setVelocity(100, percent);
         }
     }
     robot.stop = false;
-    Brain.Screen.clearLine(3, 1);
-    robot.nowTime = Brain.Timer.value();
-    Brain.Screen.setCursor(3, 1);
-    Brain.Screen.print("ConD_Done: %.2f", robot.nowTime);
+    // Brain.Screen.clearLine(3, 1);
+    // robot.nowTime = Brain.Timer.value();
+    // Brain.Screen.setCursor(3, 1);
+    // Brain.Screen.print("ConD_Done: %.2f", robot.nowTime);
 }
 
 void flip()
@@ -638,10 +634,10 @@ void flip()
 
         robot.stop = false;
         MotorBeam.spinFor(reverse, 100.0, degrees, false);
-        Brain.Screen.clearLine(3, 1);
-        robot.nowTime = Brain.Timer.value();
-        Brain.Screen.setCursor(3, 1);
-        Brain.Screen.print("R3_Done: %.2f", robot.nowTime);
+        // Brain.Screen.clearLine(3, 1);
+        // robot.nowTime = Brain.Timer.value();
+        // Brain.Screen.setCursor(3, 1);
+        // Brain.Screen.print("R3_Done: %.2f", robot.nowTime);
     }
 }
 
@@ -656,8 +652,8 @@ void LUp_pressed()
         {
             robot.stop = true;
             robot.driveDir = DriveDirection::BACKWARD;
-            if (controllerState.Rup == ButtonStage::IDLE)
-                Retract_2Pneumatic_Pin();
+            // if (controllerState.Rup == ButtonStage::IDLE)
+            //     Retract_2Pneumatic_Pin();
             if (controllerState.Rup == ButtonStage::STEP1)
                 Drop_down();
             Retract_2Pneumatic_Pin();
@@ -707,9 +703,10 @@ void Drive()
 {
     // if (!Controller.ButtonEUp.pressing())
     // {
+    double speedTurnAF = 0.0;
     if (robot.driveDir == DriveDirection::FORWARD)
     {
-        TouchLED.setColor(blue);
+        TouchLED.setColor(red);
         MotorRight.setVelocity((((Controller.AxisA.position() * Controller.AxisA.position()) * (Controller.AxisA.position() * 0.0001) - ((Controller.AxisB.position() * Controller.AxisB.position()) * (Controller.AxisB.position() * 0.0001))) * robot.Kspeed), percent);
         MotorLeft.setVelocity((((Controller.AxisA.position() * Controller.AxisA.position()) * (Controller.AxisA.position() * 0.0001) + ((Controller.AxisB.position() * Controller.AxisB.position()) * (Controller.AxisB.position() * 0.0001))) * robot.Kspeed), percent);
         MotorLeft.spin(forward);
@@ -725,9 +722,18 @@ void Drive()
     }
     if ((Controller.AxisA.position() > -5.0 and Controller.AxisA.position() < 5) and (Controller.AxisB.position() > -5.0 and Controller.AxisB.position() < 5))
     {
-        MotorLeft.stop(coast);
-        MotorRight.stop(coast);
+        if (speedTurnAF > 50.0 || speedTurnAF < -50.0)
+        {
+            MotorLeft.stop(hold);
+            MotorRight.stop(hold);
+        }
+        else
+        {
+            MotorLeft.stop(coast);
+            MotorRight.stop(coast);
+        }
     }
+    speedTurnAF = Controller.AxisB.position();
     // }
 }
 
@@ -788,7 +794,7 @@ int start()
     MotorPin.spinFor(forward, 100, degrees);
     Drop_down();
     Drop_down_beam();
-    TouchLED.setColor(blue);
+    TouchLED.setColor(red);
     Brain.Timer.reset();
     // while (true)
     // {
@@ -841,10 +847,10 @@ void FDown_pressed()
             // robot.speedB = 0.55;
             Retract_Pneumatic_Beam();
         }
-        Brain.Screen.clearLine(3, 1);
-        robot.nowTime = Brain.Timer.value();
-        Brain.Screen.setCursor(3, 1);
-        Brain.Screen.print("Fdown_Done: %.2f", robot.nowTime);
+        // Brain.Screen.clearLine(3, 1);
+        // robot.nowTime = Brain.Timer.value();
+        // Brain.Screen.setCursor(3, 1);
+        // Brain.Screen.print("Fdown_Done: %.2f", robot.nowTime);
     }
 }
 
@@ -862,6 +868,9 @@ void FUp_pressed()
             Pneumatic_back.extend(cylinder1);
             robot.pinState = PinState::ON;
             wait(100, msec);
+            MotorPin.resetPosition();
+            if (robot.NewDowm == true)
+                MotorPin.spinFor(forward, 45.0, degrees, false);
         }
         else if (robot.pinState == PinState::ON)
         {
@@ -880,6 +889,11 @@ void FUp_pressed()
             // {
             wait(100, msec);
             // Retract_2Pneumatic_Pin();
+            if (robot.NewDowm == true)
+            {
+                MotorPin.stop(coast);
+                robot.NewDowm = false;
+            }
             Pneumatic_font.retract(cylinder2);
             Pneumatic_back.retract(cylinder1);
             // MotorPin.setStopping(hold);
@@ -888,10 +902,10 @@ void FUp_pressed()
             robot.pinState = PinState::OFF;
             wait(100, msec);
         }
-        Brain.Screen.clearLine(3, 1);
-        robot.nowTime = Brain.Timer.value();
-        Brain.Screen.setCursor(3, 1);
-        Brain.Screen.print("Fup_Done: %.2f", robot.nowTime);
+        // Brain.Screen.clearLine(3, 1);
+        // robot.nowTime = Brain.Timer.value();
+        // Brain.Screen.setCursor(3, 1);
+        // Brain.Screen.print("Fup_Done: %.2f", robot.nowTime);
     }
 }
 
@@ -997,18 +1011,18 @@ void ControllerButtonL3_pressed()
         MotorPin.setVelocity(70, percent);
         // Robot NO2 = 130.0
         // Robot NO3 = 113.0
-        MotorPin.spinFor(reverse, 120.0, degrees, true);
+        MotorPin.spinFor(reverse, 100.0, degrees, true);
         MotorPin.setVelocity(100, percent);
         // red_team
-        // Pneumatic_font.retract(cylinder2);
+        Pneumatic_font.retract(cylinder2);
         // blue_team
-        Pneumatic_back.retract(cylinder1);
+        // Pneumatic_back.retract(cylinder1);
     }
     robot.stop = false;
-    Brain.Screen.clearLine(3, 1);
-    robot.nowTime = Brain.Timer.value();
-    Brain.Screen.setCursor(3, 1);
-    Brain.Screen.print("L3_Done: %.2f", robot.nowTime);
+    // Brain.Screen.clearLine(3, 1);
+    // robot.nowTime = Brain.Timer.value();
+    // Brain.Screen.setCursor(3, 1);
+    // Brain.Screen.print("L3_Done: %.2f", robot.nowTime);
 }
 
 // "when Controller ButtonR3 pressed" hat block
@@ -1019,41 +1033,41 @@ void ControllerButtonR3_pressed()
 
 void Extend_Pneumatic_Beam()
 {
-    robot.nowTime = Brain.Timer.value();
+    // robot.nowTime = Brain.Timer.value();
     Pneumatic_font.extend(cylinder1);
     robot.beamState = BeamState::ON;
-    Brain.Screen.clearLine(2, 1);
-    Brain.Screen.setCursor(2, 1);
-    Brain.Screen.print("Beam_E: %.2f", robot.nowTime);
+    // Brain.Screen.clearLine(2, 1);
+    // Brain.Screen.setCursor(2, 1);
+    // // Brain.Screen.print("Beam_E: %.2f", robot.nowTime);
 }
 
 void Retract_Pneumatic_Beam()
 {
-    robot.nowTime = Brain.Timer.value();
+    // robot.nowTime = Brain.Timer.value();
     Pneumatic_font.retract(cylinder1);
     robot.beamState = BeamState::OFF;
-    Brain.Screen.clearLine(2, 1);
-    Brain.Screen.setCursor(2, 1);
-    Brain.Screen.print("Beam_R: %.2f", robot.nowTime);
+    // Brain.Screen.clearLine(2, 1);
+    // Brain.Screen.setCursor(2, 1);
+    // Brain.Screen.print("Beam_R: %.2f", robot.nowTime);
     return;
 }
 //---
 void Extend_joint_pin()
 {
-    robot.nowTime = Brain.Timer.value();
+    // robot.nowTime = Brain.Timer.value();
     Pneumatic_back.retract(cylinder2);
-    Brain.Screen.clearLine(2, 1);
-    Brain.Screen.setCursor(2, 1);
-    Brain.Screen.print("gPin_E: %.2f", robot.nowTime);
+    // Brain.Screen.clearLine(2, 1);
+    // Brain.Screen.setCursor(2, 1);
+    // Brain.Screen.print("gPin_E: %.2f", robot.nowTime);
 }
 
 void Retract_joint_pin()
 {
-    robot.nowTime = Brain.Timer.value();
+    // robot.nowTime = Brain.Timer.value();
     Pneumatic_back.extend(cylinder2);
-    Brain.Screen.clearLine(2, 1);
-    Brain.Screen.setCursor(2, 1);
-    Brain.Screen.print("gPin_R: %.2f", robot.nowTime);
+    // Brain.Screen.clearLine(2, 1);
+    // Brain.Screen.setCursor(2, 1);
+    // Brain.Screen.print("gPin_R: %.2f", robot.nowTime);
 }
 
 void Extend_2Pneumatic_Pin()
