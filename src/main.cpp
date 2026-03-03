@@ -334,7 +334,7 @@ void Drop_down()
 // User defined function
 void Drop_down_Grab_Up()
 {
-    robot.IDoItNow = true;
+    // robot.IDoItNow = true;
     MotorPin.resetPosition();
     MotorPin.setPosition(0.0, degrees);
     MotorPin.setStopping(hold);
@@ -369,7 +369,6 @@ void Drop_down_Grab_Up()
     MotorRight.setStopping(coast);
     MotorLeft.stop();
     MotorRight.stop();
-
     MotorPin.setVelocity(100, percent);
     MotorPin.setMaxTorque(100, pct);
     MotorPin.resetPosition();
@@ -378,7 +377,7 @@ void Drop_down_Grab_Up()
     {
         // MotorPin.spinToPosition(110.0, degrees, false);
         MotorPinMotorA.spinToPosition(107, deg, false);
-        MotorPinMotorB.spinToPosition(110, deg, false);
+        MotorPinMotorB.spinToPosition(109, deg, false);
         // MotorPin.spin(forward);
         // wait(100, msec);
         // MotorPin.stop(hold);
@@ -387,9 +386,9 @@ void Drop_down_Grab_Up()
     {
         MotorPin.spinToPosition(110.0, degrees, false);
         // Left
-        // Pneumatic_font.retract(cylinder2);
+        Pneumatic_font.retract(cylinder2);
         // Right
-        Pneumatic_back.retract(cylinder1);
+        // Pneumatic_back.retract(cylinder1);
     }
     else
     {
@@ -409,7 +408,7 @@ void Drop_down_Grab_Up()
     // {
     //     wait(0.1, seconds);
     // }
-    robot.IDoItNow = false;
+    // robot.IDoItNow = false;
     robot.isBusy = false;
     // Brain.Screen.clearLine(3, 1);
     // robot.nowTime = Brain.Timer.value();
@@ -461,8 +460,8 @@ void Spin_Robot()
     while (speed > 0)
     {
         count += 1;
-        MotorLeft.spin(forward, speed, percent);
-        MotorRight.spin(reverse, speed, percent);
+        MotorLeft.spin(reverse, speed, percent);
+        MotorRight.spin(forward, speed, percent);
         if (count > 3)
         {
             speed -= 20;
@@ -852,7 +851,7 @@ void Drive()
 
     if (robot.driveDir == DriveDirection::FORWARD)
     {
-        TouchLED.setColor(red);
+        TouchLED.setColor(blue);
 
         MotorRight.setVelocity((forwardSpeed - turnSpeed) * robot.Kspeed, percent);
         MotorLeft.setVelocity((forwardSpeed + turnSpeed) * robot.Kspeed, percent);
@@ -1101,20 +1100,22 @@ void ControllerDChanged()
         //
         if (robot.isBusy == false)
         {
+            robot.stop = true;
             robot.Go = true;
-            Drop_down_Grab_Up();
+            MotorLeft.setVelocity(100, pct);
+            MotorRight.setVelocity(100, pct);
+            RUp_pressed();
         }
-        // else
-        // {
-        //     Pin_on_go();
-        // }
     }
     else if (controllerState.Rup == ButtonStage::STEP1 && Controller.AxisD.position() <= -90.0)
     {
         if (robot.isBusy == false)
         {
+            robot.stop = true;
             robot.EDown = true;
-            Drop_down_Grab_Up();
+            MotorLeft.setVelocity(100, pct);
+            MotorRight.setVelocity(100, pct);
+            RUp_pressed();
         }
     }
 }
