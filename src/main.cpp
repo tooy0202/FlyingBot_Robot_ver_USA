@@ -369,22 +369,41 @@ void Drop_down_Grab_Up()
     MotorRight.setStopping(coast);
     MotorLeft.stop();
     MotorRight.stop();
-    robot.stop = false;
+
     MotorPin.setVelocity(100, percent);
     MotorPin.setMaxTorque(100, pct);
     MotorPin.resetPosition();
+    // MotorPin.setPosition(0.0, degrees);
     if (robot.Go == true)
     {
-        MotorPin.spinToPosition(120.0, degrees, false);
+        // MotorPin.spinToPosition(110.0, degrees, false);
+        MotorPinMotorA.spinToPosition(107, deg, false);
+        MotorPinMotorB.spinToPosition(110, deg, false);
+        // MotorPin.spin(forward);
+        // wait(100, msec);
+        // MotorPin.stop(hold);
+    }
+    else if (robot.EDown == true)
+    {
+        MotorPin.spinToPosition(110.0, degrees, false);
+        // Left
+        // Pneumatic_font.retract(cylinder2);
+        // Right
+        Pneumatic_back.retract(cylinder1);
     }
     else
     {
         MotorPin.spinToPosition(220.0, degrees, false);
     }
+    robot.stop = false;
     wait(0.3, seconds);
-    if (robot.Go == false)
+    if (robot.Go == false && robot.EDown == false)
     {
         Extend_joint_pin();
+    }
+    else
+    {
+        robot.EDown = false;
     }
     // if (MotorPin.position(deg) < 210)
     // {
@@ -406,7 +425,7 @@ void Spin_Robot()
     MotorRight.stop();
     MotorPin.setStopping(coast);
     robot.driveDir = DriveDirection::BACKWARD;
-    if (robot.EDown == true)
+    if (robot.Eup == true)
     {
         /* pass */
     }
@@ -428,8 +447,9 @@ void Spin_Robot()
     MotorLeft.setStopping(hold);
     MotorLeft.setVelocity(100.0, percent);
     MotorRight.setVelocity(100.0, percent);
-    MotorLeft.spinFor(reverse, 170.0, degrees, false);
-    MotorRight.spinFor(reverse, 170.0, degrees, true);
+    MotorLeft.spinFor(reverse, 150.0, degrees, false);
+    MotorBeam.spinFor(reverse, 900.0, degrees, false);
+    MotorRight.spinFor(reverse, 150.0, degrees, true);
     MotorLeft.setVelocity(100.0, percent);
     MotorRight.setVelocity(100.0, percent);
     MotorRight.setStopping(coast);
@@ -437,11 +457,16 @@ void Spin_Robot()
     // MotorLeft.spinFor(reverse, 380.0, degrees, false);
     // MotorRight.spinFor(forward, 380.0, degrees, false);
     int speed = 100;
+    int count = 0;
     while (speed > 0)
     {
-        MotorLeft.spin(reverse, speed, percent);
-        MotorRight.spin(forward, speed, percent);
-        speed -= 10;
+        count += 1;
+        MotorLeft.spin(forward, speed, percent);
+        MotorRight.spin(reverse, speed, percent);
+        if (count == 3)
+        {
+            speed -= 20;
+        }
         wait(140, msec);
     }
     MotorLeft.stop(hold);
@@ -462,7 +487,7 @@ void Spin_Robot()
     // wait(0.2, seconds);
     // MotorLeft.stop();
     // MotorRight.stop();
-    while (MotorLeft.velocity(pct) > 1 && MotorRight.velocity(pct) > 1)
+    while (MotorLeft.velocity(pct) < -5 && MotorRight.velocity(pct) < -5)
     {
         wait(10, msec);
     }
@@ -492,16 +517,15 @@ void standoff()
             // MotorBeam.stop();
             Retract_2Pneumatic_Pin();
             MotorPin.spin(reverse);
-            wait(400, msec);
-            MotorBeam.spinFor(reverse, 900.0, degrees, false);
+            wait(250, msec);
             MotorPin.stop(coast);
+            robot.Eup = true;
             Spin_Robot();
             robot.pinState = PinState::OFF;
             Retract_joint_pin();
             MotorBeam.setStopping(hold);
             MotorPin.stop();
             Place_beam();
-            robot.Eup = true;
             Pin_On_the_sidelines();
             controllerState.Lup = ButtonStage::STEP1;
             controllerState.Rup = ButtonStage::IDLE;
@@ -828,7 +852,7 @@ void Drive()
 
     if (robot.driveDir == DriveDirection::FORWARD)
     {
-        TouchLED.setColor(blue);
+        TouchLED.setColor(red);
 
         MotorRight.setVelocity((forwardSpeed - turnSpeed) * robot.Kspeed, percent);
         MotorLeft.setVelocity((forwardSpeed + turnSpeed) * robot.Kspeed, percent);
@@ -968,6 +992,7 @@ void FUp_pressed()
             if (controllerState.Rup == ButtonStage::STEP1 && robot.Go == true)
             {
                 robot.Go = false;
+                robot.EDown = false;
                 robot.Eup = false;
             }
             wait(100, msec);
@@ -1015,7 +1040,7 @@ int Time()
     while (true)
     {
         Brain.Screen.setCursor(1, 1);
-        Brain.Screen.print("Pin: %2f ", MotorLeft.position(degrees));
+        Brain.Screen.print("Pin: %2f ", MotorPin.position(degrees));
         if ((Brain.Timer.value() > 240.0))
         {
             Brain.programStop();
@@ -1074,13 +1099,22 @@ void ControllerDChanged()
     if (controllerState.Rup == ButtonStage::STEP1 && Controller.AxisD.position() >= 90.0)
     {
         //
-        if (robot.IDoItNow == true)
+        if (robot.isBusy == false)
         {
             robot.Go = true;
+            Drop_down_Grab_Up();
         }
-        else
+        // else
+        // {
+        //     Pin_on_go();
+        // }
+    }
+    else if (controllerState.Rup == ButtonStage::STEP1 && Controller.AxisD.position() <= -90.0)
+    {
+        if (robot.isBusy == false)
         {
-            Pin_on_go();
+            robot.EDown = true;
+            Drop_down_Grab_Up();
         }
     }
 }
@@ -1097,31 +1131,31 @@ void ControllerCChanged()
         robot.stop = false;
     }
 }
-void ControllerButtonL3_pressed()
-{
-    if (robot.isBusy == false && controllerState.Rup == ButtonStage::STEP1)
-    {
-        robot.Eup = false;
-        Pneumatic_font.retract(cylinder1);
-        Retract_joint_pin();
-        MotorPin.resetPosition();
-        MotorPin.setVelocity(70, percent);
-        // Robot NO2 = 130.0
-        // Robot NO3 = 113.0
-        MotorPin.spinFor(reverse, 100.0, degrees, true);
-        MotorPin.setVelocity(100, percent);
-        // blue_team
-        // Pneumatic_font.retract(cylinder2);
-        // red_team
-        Pneumatic_back.retract(cylinder1);
-        robot.Go = true;
-    }
-    robot.stop = false;
-    // Brain.Screen.clearLine(3, 1);
-    // robot.nowTime = Brain.Timer.value();
-    // Brain.Screen.setCursor(3, 1);
-    // Brain.Screen.print("L3_Done: %.2f", robot.nowTime);
-}
+// void ControllerButtonL3_pressed()
+// {
+//     if (robot.isBusy == false && controllerState.Rup == ButtonStage::STEP1)
+//     {
+//         robot.Eup = false;
+//         Pneumatic_font.retract(cylinder1);
+//         Retract_joint_pin();
+//         MotorPin.resetPosition();
+//         MotorPin.setVelocity(70, percent);
+//         // Robot NO2 = 130.0
+//         // Robot NO3 = 113.0
+//         MotorPin.spinFor(reverse, 100.0, degrees, true);
+//         MotorPin.setVelocity(100, percent);
+//             // blue_team
+//             // Pneumatic_font.retract(cylinder2);
+//             // red_team
+//             Pneumatic_back.retract(cylinder1);
+//         robot.Go = true;
+//     }
+//     robot.stop = false;
+//     // Brain.Screen.clearLine(3, 1);
+//     // robot.nowTime = Brain.Timer.value();
+//     // Brain.Screen.setCursor(3, 1);
+//     // Brain.Screen.print("L3_Done: %.2f", robot.nowTime);
+// }
 
 // "when Controller ButtonR3 pressed" hat block
 void ControllerButtonR3_pressed()
@@ -1205,7 +1239,7 @@ int main()
     Controller.AxisD.changed(ControllerDChanged);
     Controller.AxisC.changed(ControllerCChanged);
     Controller.ButtonR3.pressed(ControllerButtonR3_pressed);
-    Controller.ButtonL3.pressed(ControllerButtonL3_pressed);
+    // Controller.ButtonL3.pressed(ControllerButtonL3_pressed);
     thread ws3_controller(control_drive);
     thread ws2_time(Time);
 }
