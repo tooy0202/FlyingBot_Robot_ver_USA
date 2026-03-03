@@ -376,9 +376,9 @@ void Drop_down_Grab_Up()
     if (robot.Go == true)
     {
         // MotorPin.spinToPosition(110.0, degrees, false);
-        MotorPinMotorA.spinToPosition(107, deg, false);
+        MotorPinMotorA.spinToPosition(109, deg, false);
         //red A 109
-        MotorPinMotorB.spinToPosition(109, deg, false);
+        MotorPinMotorB.spinToPosition(107, deg, false);
         // MotorPin.spin(forward);
         // wait(100, msec);
         // MotorPin.stop(hold);
@@ -386,10 +386,10 @@ void Drop_down_Grab_Up()
     else if (robot.EDown == true)
     {
         MotorPin.spinToPosition(110.0, degrees, false);
-        // Left
-        Pneumatic_font.retract(cylinder2);
-        // Right
-        // Pneumatic_back.retract(cylinder1);
+        // blue
+        // Pneumatic_font.retract(cylinder2);
+        // red
+        Pneumatic_back.retract(cylinder1);
     }
     else
     {
@@ -462,8 +462,8 @@ void Spin_Robot()
     {
         count += 1;
         //red Left forward
-        MotorLeft.spin(reverse, speed, percent);
-        MotorRight.spin(forward, speed, percent);
+        MotorLeft.spin(forward, speed, percent);
+        MotorRight.spin(reverse, speed, percent);
         if (count > 3)
         {
             speed -= 20;
