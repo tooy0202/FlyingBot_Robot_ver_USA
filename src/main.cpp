@@ -377,6 +377,7 @@ void Drop_down_Grab_Up()
     {
         // MotorPin.spinToPosition(110.0, degrees, false);
         MotorPinMotorA.spinToPosition(107, deg, false);
+        //red A 109
         MotorPinMotorB.spinToPosition(109, deg, false);
         // MotorPin.spin(forward);
         // wait(100, msec);
@@ -460,6 +461,7 @@ void Spin_Robot()
     while (speed > 0)
     {
         count += 1;
+        //red Left forward
         MotorLeft.spin(reverse, speed, percent);
         MotorRight.spin(forward, speed, percent);
         if (count > 3)
