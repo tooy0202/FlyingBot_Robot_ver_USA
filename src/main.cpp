@@ -1,7 +1,7 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Robot:        Teamwork_121_red                                          */
+/*    Robot:        Teamwork_121_blue                                          */
 /*    Created:      24/1/2026, 08:59:47 AM                                    */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
@@ -376,9 +376,9 @@ void Drop_down_Grab_Up()
     if (robot.Go == true)
     {
         // MotorPin.spinToPosition(110.0, degrees, false);
-        MotorPinMotorA.spinToPosition(109, deg, false);
+        MotorPinMotorA.spinToPosition(107, deg, false);
         //red A 109
-        MotorPinMotorB.spinToPosition(107, deg, false);
+        MotorPinMotorB.spinToPosition(109, deg, false);
         // MotorPin.spin(forward);
         // wait(100, msec);
         // MotorPin.stop(hold);
@@ -387,9 +387,9 @@ void Drop_down_Grab_Up()
     {
         MotorPin.spinToPosition(110.0, degrees, false);
         // blue
-        // Pneumatic_font.retract(cylinder2);
+        Pneumatic_font.retract(cylinder2);
         // red
-        Pneumatic_back.retract(cylinder1);
+        // Pneumatic_back.retract(cylinder1);
     }
     else
     {
@@ -462,8 +462,8 @@ void Spin_Robot()
     {
         count += 1;
         //red Left forward
-        MotorLeft.spin(forward, speed, percent);
-        MotorRight.spin(reverse, speed, percent);
+        MotorLeft.spin(reverse, speed, percent);
+        MotorRight.spin(forward, speed, percent);
         if (count > 3)
         {
             speed -= 20;
@@ -854,7 +854,7 @@ void Drive()
     if (robot.driveDir == DriveDirection::FORWARD)
     {
         //red
-        TouchLED.setColor(red);
+        TouchLED.setColor(blue);
 
         MotorRight.setVelocity((forwardSpeed - turnSpeed) * robot.Kspeed, percent);
         MotorLeft.setVelocity((forwardSpeed + turnSpeed) * robot.Kspeed, percent);
