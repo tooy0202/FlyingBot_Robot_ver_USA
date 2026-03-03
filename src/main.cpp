@@ -463,7 +463,7 @@ void Spin_Robot()
         count += 1;
         MotorLeft.spin(forward, speed, percent);
         MotorRight.spin(reverse, speed, percent);
-        if (count == 3)
+        if (count > 3)
         {
             speed -= 20;
         }
