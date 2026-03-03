@@ -1,8 +1,8 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Robot:        Teamwork                                             */
-/*    Created:      24/1/2026, 08:59:47 AM                                   */
+/*    Robot:        Teamwork_121_red                                          */
+/*    Created:      24/1/2026, 08:59:47 AM                                    */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 #include "vex.h"
@@ -853,7 +853,8 @@ void Drive()
 
     if (robot.driveDir == DriveDirection::FORWARD)
     {
-        TouchLED.setColor(blue);
+        //red
+        TouchLED.setColor(red);
 
         MotorRight.setVelocity((forwardSpeed - turnSpeed) * robot.Kspeed, percent);
         MotorLeft.setVelocity((forwardSpeed + turnSpeed) * robot.Kspeed, percent);
